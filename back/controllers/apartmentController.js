@@ -4,7 +4,14 @@ const prisma = new PrismaClient();
 
 export const getAllApartments = async (req, res) => {
     try {
-        const apartments = await prisma.apartment.findMany();
+        const apartments = await prisma.apartment.findMany({
+            include: {
+                User: true 
+            },
+            orderBy: {
+                id : 'asc' 
+            }
+        });
         res.status(200).json(apartments);
     } catch (error) {
         console.error('Error fetching apartments:', error);
