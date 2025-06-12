@@ -17,3 +17,21 @@ export async function sendMail({ to, subject, text, html }) {
     html,
   });
 }
+
+
+export async function sendRentMailsToAllTenants(apartments) {
+  try {
+    for (const apartment of apartments) {
+      const mailData = {
+        to: apartment.User.email,
+        subject: 'Quittance de loyer',
+        text: `Bonjour ${apartment.User.lastname} ${apartment.User.firstname}, voici votre quittance.`,
+      };
+      await sendMail(mailData);
+      console.log(`Email sent to ${apartment.User.email}`);
+    }
+  } catch (error) {
+    console.error('Error sending mails to all tenants:', error);
+    throw error;
+  }
+}

@@ -1,6 +1,6 @@
 import ApartmentCardContent from './ApartmentCardContent';
 import ApartmentCardButton from './ApartmentCardButtons';
-
+import FormContainer from '../PopupCard/FormContainer';
 
 function ApartmentCard({apartment}) {
 
@@ -9,6 +9,8 @@ function ApartmentCard({apartment}) {
             <p>Appartement n°{apartment.id}</p>
             <ApartmentCardContent apartment={apartment} />
             <ApartmentCardButton apartment={apartment} />
+            <FormContainer data={apartment} />
+            
         </div>
     );
 }

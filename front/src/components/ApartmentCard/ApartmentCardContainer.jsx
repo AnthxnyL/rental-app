@@ -5,7 +5,7 @@ import ApartmentCard from './ApartmentCard';
 
 
 function ApartmentCardContainer() {
-     const [apartments, setApartments] = useState([]);
+    const [apartments, setApartments] = useState([]);
    
     useEffect(()=> {
         getApartments().then(data=> setApartments(data))

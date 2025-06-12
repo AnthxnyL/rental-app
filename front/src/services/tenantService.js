@@ -26,6 +26,7 @@ export const getTenantById = async (id) => {
 export const updateTenant = async (id, tenantData) => {
     try {
         const response = await axios.put(`${API_URL}/${id}`, tenantData);
+        console.log(`Tenant with ID ${id} updated successfully:`, response.data);
         return response.data;
     } catch (error) {
         console.error(`Error updating tenant with ID ${id}:`, error);
