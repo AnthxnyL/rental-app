@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <script src="/puppeteer.mjs"></script>
+  <title>Quittance de Loyer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      padding: 40px;
+      color: #000;
+    }
+
+    h1 {
+      text-align: center;
+      color: #003399;
+      margin-bottom: 30px;
+      text-decoration: underline;
+    }
+
+    .section {
+      border: 1px solid #003399;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+    }
+
+    .flex {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .col {
+      width: 48%;
+    }
+
+    h2 {
+      color: #003399;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+
+    .footer {
+      margin-top: 40px;
+    }
+
+    .right {
+      text-align: right;
+    }
+
+    .amount {
+      text-align: right;
+      font-weight: bold;
+    }
+
+    .small {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .signature {
+      margin-top: 60px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Quittance De Loyer</h1>
+
+  <div class="section">
+    <p>Quittance de loyer pour la période du <strong>{{periode_debut}}</strong> au <strong>{{periode_fin}}</strong></p>
+    <div class="flex">
+      <div class="col">
+        <h3>Propriétaire :</h3>
+        <p><strong>Nom :</strong> {{nom_proprio}}<br>
+        <strong>Adresse :</strong> {{adresse_proprio}}<br>
+        <strong>
+Téléphone :</strong> {{telephone_proprio}}</p>
+      </div>
+      <div class="col right">
+        <h3>Locataire :</h3>
+        <p><strong>Nom :</strong> <span  class="locataire">{{nom_locataire}}</span><br><p>
+        <p><strong>Adresse :</strong> {{adresse_locataire}}<br></p>
+        <p><strong>Téléphone :</strong> {{telephone_locataire}}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Détails du Loyer</h2>
+    <p><strong>Montant du loyer :</strong> {{montant_loyer}} €</p>
+    <p><strong>Date de paiement :</strong> {{date_paiement}}</p>
+    <p><strong>Moyen de paiement :</strong> {{moyen_paiement}}</p>
+  </div>
+
+  <div class="footer">
+    <p class="small">Cette quittance est délivrée en double exemplaire, un pour le locataire et un pour le propriétaire.</p>
+    <div class="signature">
+      <p class="right">Fait à {{lieu}}, le {{date_emission}}</p>
+      <p class="right">Signature du Propriétaire : ____________________</p>
+    </div>
+  </div>
+  <p class="small">Pour toute question, veuillez contacter le propriétaire au numéro indiqué ci-dessus.</p>
+  <p class="small">Ce document est généré automatiquement et ne nécessite pas de signature manuscrite.</p>
+  <p class="small">© {{annee_actuelle}} - Tous droits réservés</p>
+</body>
+</html>

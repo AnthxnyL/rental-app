@@ -67,7 +67,7 @@ export const createApartment = async (req, res) => {
 
 export const updateApartment = async (req, res) => {
     const { id } = req.params;
-    const { address, city, postalCode, rent, charges, UserId } = req.body;
+    const { address, city, postalCode, rent, charges, isPaid, UserId } = req.body;
     try {
         const updatedApartment = await prisma.apartment.update({
             where: { id: parseInt(id) },
@@ -77,6 +77,7 @@ export const updateApartment = async (req, res) => {
                 postalCode,
                 rent,
                 charges,
+                isPaid,
                 UserId
             }
         });

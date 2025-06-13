@@ -21,7 +21,7 @@ model User {
   lastname        String?
   role            String    @default("TENANT")
   password        String?   @default("")
-  appartments      Apartment[]
+  appartments     Apartment[]
 }
 
 
@@ -34,4 +34,5 @@ model Apartment {
   postalCode      String
   UserId          Int?
   User            User?     @relation(fields: [UserId], references: [id])
+  isPaid          Boolean   @default(true)
 }

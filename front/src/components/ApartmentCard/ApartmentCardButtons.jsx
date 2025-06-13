@@ -1,47 +1,45 @@
-import  { sendRentMail, sendRentMailsToAllTenants }  from "../../services/mailerService";
+import  { sendRentMailsToAllTenants }  from "../../services/mailerService";
+import { updateApartment } from "../../services/ApartmentService";
 import LongButton from "../Buttons/LongButton";
 import CircleButton from "../Buttons/CircleButton";
+import { useState } from "react";
 
 function ApartmentCardButton({ apartment }) {
+    const [isPaid, setIsPaid] = useState(apartment.isPaid);
 
-    const handleClick = async () => {
-        try {
-            // Envoi individuel (déjà présent)
-            // await sendRentMail({
-            //     to: apartment.User.email,
-            //     subject: 'Quittance de loyer',
-            //     text: `Bonjour ${apartment.User.lastname} ${apartment.User.firstname}, voici votre quittance.`,
-            // });
-            // alert("Email envoyé !");
-        } catch (error) {
-            // alert("L'envoi de l'email a échoué ❌");
-        }
-    };
 
-    // Nouveau : envoi groupé
     const handleSendAll = async () => {
+        await sendRentMailsToAllTenants();
+    };
+
+    const handleIsPaid = async () => {
         try {
-            await sendRentMailsToAllTenants();
-            alert("Emails envoyés à tous les locataires !");
+            const updatedApartment = await updateApartment(apartment.id, { isPaid: !isPaid });
+            setIsPaid(updatedApartment.isPaid);
         } catch (error) {
-            alert("L'envoi groupé a échoué ❌");
+            console.error("Erreur lors de la mise à jour de l'état de paiement :", error);
         }
     };
+
+
 
     return (
         <div>
-            <LongButton
-                onClick={handleClick}
-                className="bg-blue-500 text-white hover:bg-blue-600"
-            >
-                Envoyer un email
-            </LongButton>
             <LongButton
                 onClick={handleSendAll}
                 className="bg-green-500 text-white hover:bg-green-600 mt-2"
             >
                 Envoyer à tous les locataires
             </LongButton>
+            
+
+            <CircleButton
+                onClick={handleIsPaid}
+                className="bg-yellow-500 text-white hover:bg-yellow-600 mt-20"
+            >
+               Autoriser l'envoi de quittance
+            </CircleButton>
+
         </div>
     );
 }

@@ -2,6 +2,7 @@ import ApartmentCardContent from './ApartmentCardContent';
 import ApartmentCardButton from './ApartmentCardButtons';
 import FormContainer from '../PopupCard/FormContainer';
 
+
 function ApartmentCard({apartment}) {
 
     return (
