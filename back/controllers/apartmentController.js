@@ -4,20 +4,21 @@ const prisma = new PrismaClient();
 
 export const getAllApartments = async (req, res) => {
     try {
-        const apartments = await prisma.apartment.findMany({
-            include: {
-                User: true 
-            },
-            orderBy: {
-                id : 'asc' 
-            }
-        });
+         const apartments = await fetchAllApartments();
         res.status(200).json(apartments);
     } catch (error) {
         console.error('Error fetching apartments:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
+
+
+export const fetchAllApartments = async () => {
+    return await prisma.apartment.findMany({
+        include: { User: true }
+    });
+};
+
 
 
 export const getApartmentById = async (req, res) => {

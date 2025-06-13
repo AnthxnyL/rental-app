@@ -1,4 +1,4 @@
-import  { sendRentMailsToAllTenants }  from "../../services/mailerService";
+
 import { updateApartment } from "../../services/ApartmentService";
 import LongButton from "../Buttons/LongButton";
 import CircleButton from "../Buttons/CircleButton";
@@ -6,11 +6,6 @@ import { useState } from "react";
 
 function ApartmentCardButton({ apartment }) {
     const [isPaid, setIsPaid] = useState(apartment.isPaid);
-
-
-    const handleSendAll = async () => {
-        await sendRentMailsToAllTenants();
-    };
 
     const handleIsPaid = async () => {
         try {
@@ -25,13 +20,6 @@ function ApartmentCardButton({ apartment }) {
 
     return (
         <div>
-            <LongButton
-                onClick={handleSendAll}
-                className="bg-green-500 text-white hover:bg-green-600 mt-2"
-            >
-                Envoyer à tous les locataires
-            </LongButton>
-            
 
             <CircleButton
                 onClick={handleIsPaid}

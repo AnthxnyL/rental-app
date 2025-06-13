@@ -1,9 +1,6 @@
 import puppeteer from 'puppeteer';
-import { PrismaClient } from "@prisma/client"
 import fs from 'fs';
 import path from 'path';
-
-const prisma = new PrismaClient();
 
 
 export const generateQuittance = async (data) => {
@@ -48,20 +45,8 @@ export const generateQuittance = async (data) => {
     await page.pdf({ path: cheminComplet, format: 'A4' });
 
     await browser.close();
-};
-
-export const generateQuittancesForAllTenants = async () => {
-    // Récupère tous les appartements et leurs locataires depuis la base
-    const apartments = await prisma.apartment.findMany({ include: { User: true } });
-    for (const apartment of apartments) {
-        if (apartment.isPaid === false) {
-            continue; // Skip this apartment if isPaid is false
-        }
-        console.log(`Generating quittance for ${apartment.id}`);
-        await generateQuittance({
-            User: apartment.User,
-            address: apartment.address,
-            rent: apartment.rent
-        });
-    }
+    return {
+        pdfPath: cheminComplet,
+        pdfName: nomFichier
+    };
 };

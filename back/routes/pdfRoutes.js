@@ -1,5 +1,5 @@
 import express from 'express';
-import { generateQuittance, generateQuittancesForAllTenants } from '../services/pdfService.js';
+import { generateQuittance } from '../services/pdfService.js';
 
 const router = express.Router();
 
@@ -14,15 +14,6 @@ router.post('/generate', async (req, res) => {
 });
 
 
-router.post('/generate-all', async (req, res) => {
-  try {
-    const result = await generateQuittancesForAllTenants(req.body);
-    res.status(200).json({ message: result });
-  } catch (error) {
-    console.error('Erreur lors de la génération des quittances pour tous les locataires :', error);
-    res.status(500).json({ error: 'Erreur lors de la génération des quittances pour tous les locataires', details: error.message });
-  }
-});
 
 
 
