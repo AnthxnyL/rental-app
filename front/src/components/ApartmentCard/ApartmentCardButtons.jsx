@@ -27,6 +27,12 @@ function ApartmentCardButton({ apartment }) {
             >
                Autoriser l'envoi de quittance
             </CircleButton>
+            <LongButton
+                text={isPaid ? "Quittance envoyée" : "Envoyer quittance"}
+                onClick={handleIsPaid}
+                disabled={isPaid}
+                className="mt-4"
+            />
 
         </div>
     );
