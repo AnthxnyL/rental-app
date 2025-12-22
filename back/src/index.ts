@@ -10,7 +10,10 @@ const PORT = process.env.PORT || 5001;
 
 // Middlewares
 app.use(cors({
-  origin: 'http://localhost:5173'
+  origin: [
+    'http://localhost:5173',
+    "https://rental-app-back.onrender.com/"
+  ]
 }));
 app.use(express.json());
 
