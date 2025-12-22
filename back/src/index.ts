@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes';
 import apartmentRoutes from './routes/apartmentRoutes';
+import tenantRoutes from './routes/tenantRoutes';
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/apartments', apartmentRoutes);
+app.use('/api/tenants', tenantRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ status: "OK", timestamp: new Date() });

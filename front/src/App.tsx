@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import SigninPage from "./pages/SigninPage"; // Vérifie tes chemins
 import SignupPage from "./pages/SignupPage";
+import Dashboard from "./pages/Dashboard";
 import type { Session } from "@supabase/supabase-js";
-import { Button } from "./components/ui/button";
 
 function App() {
   const [session, setSession] = useState<Session | null>(null);
@@ -44,18 +44,6 @@ function App() {
         <Route path="/" element={<Navigate to={session ? "/dashboard" : "/signin"} />} />
       </Routes>
     </Router>
-  );
-}
-
-// Composant temporaire pour ton Dashboard
-function Dashboard() {
-  return (
-    <div className="p-8">
-      <h1 className="text-4xl font-black uppercase tracking-tighter">Tableau de bord</h1>
-      <Button onClick={() => supabase.auth.signOut()} className="mt-4 bg-black text-white rounded-none uppercase font-bold">
-        Déconnexion
-      </Button>
-    </div>
   );
 }
 
