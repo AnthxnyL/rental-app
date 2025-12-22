@@ -8,3 +8,13 @@ export interface Profile {
 
 export interface SignupRequest extends Omit<Profile, 'role'> {
 }
+
+export interface Apartment {
+  id?: number;
+  owner_id: string;
+  address: string;
+  city: string;
+  postal_code: string;
+  rent_hc: number;
+  charges: number;
+}
