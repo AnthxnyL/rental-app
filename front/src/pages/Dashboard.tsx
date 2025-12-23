@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Plus, Pencil, Trash2, Home, LogOut } from "lucide-react";
 import ApartmentModal from "@/components/Dashboard/ApartmentModal";
+import { Header } from "@/components/layouts/Header";
 
 export default function Dashboard() {
   const [apartments, setApartments] = useState<any[]>([]);
@@ -77,21 +78,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-zinc-50">
       {/* Barre de navigation simple */}
-      <nav className="border-b-2 border-black bg-white p-4">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Home className="h-6 w-6 stroke-[3px]" />
-            <span className="font-black uppercase tracking-tighter text-xl">Locat.Gestion</span>
-          </div>
-          <Button 
-            variant="ghost" 
-            onClick={() => supabase.auth.signOut()}
-            className="font-bold uppercase text-xs hover:bg-black hover:text-white rounded-none border border-transparent hover:border-black"
-          >
-            <LogOut className="mr-2 h-4 w-4" /> Déconnexion
-          </Button>
-        </div>
-      </nav>
+      <Header />
 
       <main className="max-w-7xl mx-auto p-6 md:p-10">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
