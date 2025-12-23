@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import { authenticate } from '../middlewares/authMiddleware';
-import { generatePdf } from '../controllers/pdfController';
+import { generatePdf, sendReceiptEmail } from '../controllers/pdfController';
 
 const router = Router();
 
 router.get('/generate', authenticate, generatePdf);
+router.post('/send-email', authenticate, sendReceiptEmail);
 
 export default router;

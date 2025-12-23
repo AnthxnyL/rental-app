@@ -49,7 +49,16 @@ export const fetchFullTenantData = async (tenantId: string, ownerId: string) => 
       .select(`
         *,
         apartments!fk_tenants_apartment (*),
-        profiles:owner_id (firstname, lastname, email)
+        profiles:owner_id (
+          firstname, 
+          lastname, 
+          email, 
+          address, 
+          zip_code, 
+          city, 
+          lmnp_number, 
+          phone
+        )
       `)
       .eq('id', tenantId)
       .eq('owner_id', ownerId)
