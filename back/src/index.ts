@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes';
 import apartmentRoutes from './routes/apartmentRoutes';
 import tenantRoutes from './routes/tenantRoutes';
+import pdfRoutes from './routes/pdfRoutes';
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/apartments', apartmentRoutes);
 app.use('/api/tenants', tenantRoutes);
+app.use('/api/pdf', pdfRoutes)
 
 app.get('/health', (req, res) => {
   res.json({ status: "OK", timestamp: new Date() });
