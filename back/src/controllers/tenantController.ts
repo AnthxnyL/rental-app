@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { supabase } from '../config/supabase';
 
-// 1. Récupérer tous les locataires du propriétaire
 export const getTenants = async (req: any, res: Response) => {
   try {
     const { data, error } = await supabase
@@ -44,7 +43,7 @@ export const getTenantById = async (req: any, res: Response) => {
 
 export const fetchFullTenantData = async (tenantId: string, ownerId: string) => {
   try {
-    const { data, error, status } = await supabase
+    const { data, error } = await supabase
       .from('tenants')
       .select(`
         *,
@@ -76,7 +75,6 @@ export const fetchFullTenantData = async (tenantId: string, ownerId: string) => 
   }
 };
 
-// 2. Créer un locataire
 export const createTenant = async (req: any, res: Response) => {
   const { first_name, last_name, email, phone, apartment_id } = req.body;
   const owner_id = req.user.id;
@@ -95,7 +93,6 @@ export const createTenant = async (req: any, res: Response) => {
   }
 };
 
-// 3. Modifier un locataire
 export const updateTenant = async (req: any, res: Response) => {
   const { id } = req.params;
   const updates = req.body;
@@ -116,7 +113,6 @@ export const updateTenant = async (req: any, res: Response) => {
   }
 };
 
-// 4. Supprimer un locataire
 export const deleteTenant = async (req: any, res: Response) => {
   const { id } = req.params;
   try {
