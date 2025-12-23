@@ -19,6 +19,54 @@ export const getTenants = async (req: any, res: Response) => {
   }
 };
 
+export const getTenantById = async (req: any, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const { data, error } = await supabase
+      .from('tenants')
+      .select(`
+        *,
+        apartments (*) 
+      `)
+      .eq('id', id)
+      .eq('owner_id', req.user.id)
+      .single();
+
+    if (error) throw error;
+    if (!data) return res.status(404).json({ error: "Locataire non trouvé" });
+
+    res.json(data);
+  } catch (error: any) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+export const fetchFullTenantData = async (tenantId: string, ownerId: string) => {
+  try {
+    const { data, error, status } = await supabase
+      .from('tenants')
+      .select(`
+        *,
+        apartments!fk_tenants_apartment (*),
+        profiles:owner_id (firstname, lastname, email)
+      `)
+      .eq('id', tenantId)
+      .eq('owner_id', ownerId)
+      .single();
+
+    if (error) {
+      console.error(`[Supabase Error] Fetch Tenant ${tenantId}:`, error.message);
+      throw error;
+    }
+
+    return { data, error: null };
+  } catch (err: any) {
+    console.error(`[System Error] fetchFullTenantData:`, err.message);
+    return { data: null, error: err };
+  }
+};
+
 // 2. Créer un locataire
 export const createTenant = async (req: any, res: Response) => {
   const { first_name, last_name, email, phone, apartment_id } = req.body;

@@ -15,6 +15,26 @@ export const getApartments = async (req: any, res: Response) => {
   }
 };
 
+export const getApartmentById = async (req: any, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const { data, error } = await supabase
+      .from('apartments')
+      .select('*')
+      .eq('id', id)
+      .eq('owner_id', req.user.id)
+      .single();
+
+    if (error) throw error;
+    if (!data) return res.status(404).json({ error: "Appartement non trouvé" });
+
+    res.json(data);
+  } catch (error: any) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 export const createApartment = async (req: any, res: Response) => {
   const { address, city, postal_code, rent_hc, charges } = req.body;
   const owner_id = req.user.id;
