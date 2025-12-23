@@ -36,13 +36,13 @@ export const getApartmentById = async (req: any, res: Response) => {
 };
 
 export const createApartment = async (req: any, res: Response) => {
-  const { address, city, postal_code, rent_hc, charges } = req.body;
+  const { address, city, zip_code, rent_hc, charges } = req.body;
   const owner_id = req.user.id;
 
   try {
     const { data, error } = await supabase
       .from('apartments')
-      .insert([{ address, city, postal_code, rent_hc, charges, owner_id }])
+      .insert([{ address, city, zip_code, rent_hc, charges, owner_id }])
       .select()
       .single();
 
@@ -71,12 +71,12 @@ export const deleteApartment = async (req: any, res: Response) => {
 
 export const updateApartment = async (req: any, res: Response) => {
   const { id } = req.params;
-  const { address, city, postal_code, rent_hc, charges } = req.body;
+  const { address, city, zip_code, rent_hc, charges } = req.body;
 
   try {
     const { data, error } = await supabase
       .from('apartments')
-      .update({ address, city, postal_code, rent_hc, charges })
+      .update({ address, city, zip_code, rent_hc, charges })
       .eq('id', id)
       .eq('owner_id', req.user.id)
       .select()

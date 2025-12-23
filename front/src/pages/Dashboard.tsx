@@ -9,9 +9,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Pencil, Trash2, Home, LogOut } from "lucide-react";
-import ApartmentModal from "@/components/Dashboard/ApartmentModal";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 import { Header } from "@/components/layouts/Header";
+import { AddApartmentModal } from "@/components/Dashboard/AddApartmentModal";
 
 export default function Dashboard() {
   const [apartments, setApartments] = useState<any[]>([]);
@@ -114,7 +114,7 @@ export default function Dashboard() {
                 apartments.map((apt) => (
                   <TableRow key={apt.id} className="border-b border-zinc-200 hover:bg-zinc-50 transition-colors">
                     <TableCell className="font-bold py-6">{apt.address}</TableCell>
-                    <TableCell className="font-medium">{apt.city} ({apt.postal_code})</TableCell>
+                    <TableCell className="font-medium">{apt.city} ({apt.zip_code})</TableCell>
                     <TableCell className="text-center font-bold">
                       {Number(apt.rent_hc) + Number(apt.charges)} €
                     </TableCell>
@@ -147,11 +147,10 @@ export default function Dashboard() {
       </main>
 
       {/* Modal partagé Ajout / Edition */}
-      <ApartmentModal 
+      <AddApartmentModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
         onSuccess={fetchApartments}
-        initialData={selectedApartment}
       />
     </div>
   );
