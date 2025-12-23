@@ -12,6 +12,13 @@ export const generatePdf = async (req: any, res: Response) => {
 
     const doc = new PDFDocument({ size: 'A4', margin: 50 });
 
+    const m = parseInt(month as string);
+    const y = parseInt(year as string);
+    
+    // Le jour 0 du mois suivant est le dernier jour du mois actuel
+    const lastDay = new Date(y, m, 0).getDate(); 
+    const formattedMonth = String(m).padStart(2, '0');
+
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename=Quittance_${tenant.last_name}_${month}_${year}.pdf`);
     doc.pipe(res);
@@ -19,7 +26,7 @@ export const generatePdf = async (req: any, res: Response) => {
     // --- 1. EN-TÊTE ---
     doc.font('Helvetica-Bold').fontSize(22).text('QUITTANCE DE LOYER', { align: 'center' });
     doc.moveDown(0.5);
-    doc.font('Helvetica').fontSize(11).text(`Quittance de loyer pour la période du 01/${month}/${year} au 30/${month}/${year}`, { align: 'center' });
+    doc.font('Helvetica').fontSize(11).text(`Quittance de loyer pour la période du 01/${formattedMonth}/${y} au ${lastDay}/${formattedMonth}/${y}`, { align: 'center' });
     
     doc.moveDown(3);
 
