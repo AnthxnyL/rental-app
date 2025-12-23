@@ -1,13 +1,10 @@
 import PDFKit from 'pdfkit';
+import { getMonthName, getLastDayOfMonth, formatTwoDigits } from '../utils/date';
 
 export const drawReceiptContent = (doc: typeof PDFKit, tenant: any, month: string, year: string) => {
-    const m = parseInt(month);
-    const y = parseInt(year);
-    const lastDay = new Date(y, m, 0).getDate();
-    const formattedMonth = String(m).padStart(2, '0');
-    
-    const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 
-                        'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+    const monthName = getMonthName(month);
+    const lastDay = getLastDayOfMonth(month, year);
+    const formattedMonth = formatTwoDigits(month);
 
     const rentAmount = Number(tenant.apartments.rent_hc);
     const chargesAmount = Number(tenant.apartments.charges);
@@ -16,7 +13,7 @@ export const drawReceiptContent = (doc: typeof PDFKit, tenant: any, month: strin
     doc.font('Helvetica-Bold').fontSize(20).text('QUITTANCE DE LOYER', { align: 'center' });
     doc.moveDown(2);
 
-    doc.font('Helvetica-Bold').fontSize(11).text(`Quittance de loyer du mois de : ${monthNames[m - 1]} ${y}`, 50);
+    doc.font('Helvetica-Bold').fontSize(11).text(`Quittance de loyer du mois de : ${monthName} ${year}`, 50);
     doc.moveDown(2);
 
     const leftCol = 50;
@@ -55,8 +52,8 @@ export const drawReceiptContent = (doc: typeof PDFKit, tenant: any, month: strin
     doc.text(`${tenant.apartments.zip_code} ${tenant.apartments.city}`, rightCol);
 
     doc.moveDown(2);
-  
-    const mainText = `Je soussigné(e) ${tenant.profiles.lastname} ${tenant.profiles.firstname}, propriétaire du logement susmentionné, confirme avoir reçu de Monsieur / Madame ${tenant.last_name} ${tenant.first_name} la somme de ${totalAmount.toFixed(2)} euros en paiement du loyer et des charges pour la période du 01/${formattedMonth}/${y} au ${lastDay}/${formattedMonth}/${y}, et en donne quittance sous réserve de tous mes droits.`;
+
+    const mainText = `Je soussigné(e) ${tenant.profiles.lastname} ${tenant.profiles.firstname}, propriétaire du logement susmentionné, confirme avoir reçu de Monsieur / Madame ${tenant.last_name} ${tenant.first_name} la somme de ${totalAmount.toFixed(2)} euros en paiement du loyer et des charges pour la période du 01/${formattedMonth}/${year} au ${lastDay}/${formattedMonth}/${year}, et en donne quittance sous réserve de tous mes droits.`;
         doc.text(mainText, leftCol, doc.y, { width: 500, align: 'justify' });
 
     doc.moveDown(2);
@@ -64,7 +61,7 @@ export const drawReceiptContent = (doc: typeof PDFKit, tenant: any, month: strin
     doc.font('Helvetica').text(`• Loyer : ${rentAmount.toFixed(2)} €`, leftCol + 20);
     doc.text(`• Provision pour charges : ${chargesAmount.toFixed(2)} €`, leftCol + 20);
     doc.font('Helvetica-Bold').text(`• Total réglé : ${totalAmount.toFixed(2)} €`, leftCol + 20);
-    doc.font('Helvetica').text(`• Date de paiement : 05/${formattedMonth}/${y}`, leftCol + 20);
+    doc.font('Helvetica').text(`• Date de paiement : 05/${formattedMonth}/${year}`, leftCol + 20);
 
     doc.moveDown(3);
     doc.font('Helvetica-Bold').text('Signature du bailleur', leftCol);

@@ -3,6 +3,7 @@ import PDFDocument from 'pdfkit';
 import { fetchFullTenantData } from './tenantController';
 import { drawReceiptContent } from '../services/pdfService';
 import { transporter } from '../config/mailer';
+import { getMonthName, getLastDayOfMonth, formatTwoDigits } from '../utils/date';
 
 // 1. TÉLÉCHARGEMENT DIRECT
 export const generatePdf = async (req: any, res: Response) => {
@@ -29,6 +30,10 @@ export const sendReceiptEmail = async (req: any, res: Response) => {
   try {
     const { data: tenant, error } = await fetchFullTenantData(tenantId, req.user.id);
     if (error || !tenant) return res.status(404).json({ error: "Locataire introuvable" });
+    const monthName = getMonthName(month);
+    const lastDay = getLastDayOfMonth(month, year);
+    const formattedMonth = formatTwoDigits(month);
+    
 
     const doc = new PDFDocument({ size: 'A4', margin: 50 });
     let chunks: any[] = [];
@@ -37,11 +42,39 @@ export const sendReceiptEmail = async (req: any, res: Response) => {
     doc.on('end', async () => {
       const pdfBuffer = Buffer.concat(chunks);
       await transporter.sendMail({
-        from: `"LocatGestion" <${process.env.SMTP_USER}>`,
+        from: `"Gestion Locative - ${tenant.profiles.firstname} ${tenant.profiles.lastname}" <${process.env.SMTP_USER}>`,
         to: tenant.email,
-        subject: `Quittance de loyer - ${month}/${year}`,
-        text: `Bonjour ${tenant.first_name}, veuillez trouver votre quittance ci-jointe.`,
-        attachments: [{ filename: `Quittance_${month}_${year}.pdf`, content: pdfBuffer }]
+        subject: `Quittance de loyer - ${monthName} ${year}`,
+        html: `
+            <div style="font-family: sans-serif; line-height: 1.5; color: #333;">
+            <p>Bonjour <strong>${tenant.first_name} ${tenant.last_name}</strong>,</p>
+            
+            <p>Nous vous confirmons la bonne réception de votre règlement pour le loyer du mois de <strong>${monthName} ${year}</strong>.</p>
+            
+            <p>Vous trouverez en pièce jointe de ce mail votre quittance de loyer correspondante.</p>
+            
+            <p>Ce document atteste du paiement intégral de votre terme pour le logement situé au :<br>
+            <em>${tenant.apartments.address}, ${tenant.apartments.zip_code} ${tenant.apartments.city}</em></p>
+            
+            <p>Nous vous recommandons de conserver ce document pendant une durée de 3 ans.</p>
+            
+            <p>Restant à votre disposition pour toute information complémentaire.</p>
+            
+            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+            
+            <p style="font-size: 12px; color: #666;">
+                Cordialement,<br>
+                <strong>${tenant.profiles.firstname} ${tenant.profiles.lastname}</strong><br>
+                ${tenant.profiles.phone || ''}
+            </p>
+            </div>
+        `,
+        attachments: [
+            {
+            filename: `Quittance_${tenant.last_name}_${monthName}_${year}.pdf`,
+            content: pdfBuffer,
+            },
+        ],
       });
       res.json({ message: "Email envoyé !" });
     });
