@@ -6,6 +6,7 @@ import SignupPage from "./pages/SignupPage";
 import Dashboard from "./pages/Dashboard";
 import type { Session } from "@supabase/supabase-js";
 import { Toaster } from "sonner";
+import Profile from "./pages/Profile";
 
 function App() {
   const [session, setSession] = useState<Session | null>(null);
@@ -42,6 +43,7 @@ function App() {
           element={session ? <Dashboard /> : <Navigate to="/signin" />} 
         />
 
+        <Route path="/profile" element={<Profile />} />
         {/* Redirection par défaut */}
         <Route path="/" element={<Navigate to={session ? "/dashboard" : "/signin"} />} />
       </Routes>

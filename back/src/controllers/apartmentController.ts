@@ -149,3 +149,23 @@ export const updateApartment = async (req: any, res: Response) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const getMe = async (req: any, res: Response) => {
+  try {
+    const userId = req.user.id;
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    if (error) {
+      return res.status(404).json({ error: "Profil non trouvé" });
+    }
+
+    res.json(data);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
