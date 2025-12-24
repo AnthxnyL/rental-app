@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Mail } from "lucide-react";
 import { Header } from "@/components/layouts/Header";
 import { AddApartmentModal } from "@/components/Dashboard/AddApartmentModal";
 
@@ -40,27 +40,6 @@ export default function Dashboard() {
     }
   };
 
-  // 2. Supprimer un appartement
-  const handleDelete = async (id: number) => {
-    if (!confirm("Voulez-vous vraiment supprimer ce bien ?")) return;
-
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/apartments/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${session?.access_token}`,
-        },
-      });
-
-      if (response.ok) {
-        setApartments(apartments.filter((apt) => apt.id !== id));
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Erreur lors de la suppression");
-    }
-  };
 
   useEffect(() => {
     fetchApartments();
@@ -74,6 +53,48 @@ export default function Dashboard() {
   const openAddModal = () => {
     setSelectedApartment(null);
     setIsModalOpen(true);
+  };
+
+  const handleSendEmail = async (apt: any) => {
+    const tenantId = apt.tenants?.[0]?.id;
+    
+    if (!tenantId) {
+      alert("Aucun locataire associé.");
+      return;
+    }
+
+    if (!confirm(`Envoyer la quittance par mail ?`)) return;
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      // URL propre sans paramètres
+      const url = `${import.meta.env.VITE_API_URL}/api/pdf/send-email`;
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${session?.access_token}`,
+          "Content-Type": "application/json"
+        },
+        // Les données sont ici maintenant
+        body: JSON.stringify({
+          tenantId: tenantId,
+          month: new Date().getMonth() + 1,
+          year: new Date().getFullYear()
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert("Email envoyé avec succès !");
+      } else {
+        alert("Erreur : " + (result.error || "Échec de l'envoi"));
+      }
+    } catch (error: any) {
+      alert("Erreur réseau : " + error.message);
+    }
   };
 
   return (
@@ -121,22 +142,25 @@ export default function Dashboard() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
+                        {/* NOUVEAU BOUTON MAIL */}
                         <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="rounded-none border-black bg-yellow-400 hover:bg-yellow-500 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all"
+                          onClick={() => handleSendEmail(apt)}
+                          title="Envoyer la quittance"
+                        >
+                          <Mail className="h-4 w-4" />
+                        </Button>
+
+                       <Button 
                           variant="outline" 
                           size="icon" 
                           className="rounded-none border-black hover:bg-zinc-100"
                           onClick={() => openEditModal(apt)}
                         >
                           <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="icon" 
-                          className="rounded-none border-black hover:bg-red-50 hover:text-red-600 hover:border-red-600 transition-colors"
-                          onClick={() => handleDelete(apt.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        </Button>     
                       </div>
                     </TableCell>
                   </TableRow>

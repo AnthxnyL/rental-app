@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { X, Loader2 } from "lucide-react";
+import { X, Loader2, Trash2 } from "lucide-react";
 import { PropertyFormFields } from "./PropertyFormFields";
 import { initialPropertyState, type PropertyFormData } from "@/types/property";
+import { Button } from "../ui/button";
 
 interface Props {
   isOpen: boolean;
@@ -38,8 +39,6 @@ export function AddApartmentModal({ isOpen, onClose, onSuccess, initialData }: P
       setFormData(initialPropertyState);
     }
   }, [initialData, isOpen]);
-
-  console.log("AddApartmentModal rendu avec initialData:", initialData);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,6 +84,34 @@ export function AddApartmentModal({ isOpen, onClose, onSuccess, initialData }: P
       setLoading(false);
     }
   };
+
+  const handleDelete = async () => {
+    if (!initialData?.id) return;
+    
+    if (!confirm("Voulez-vous vraiment supprimer cet appartement et son historique ?")) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/apartments/${initialData.id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
+
+      if (!response.ok) throw new Error("Erreur lors de la suppression");
+
+      onSuccess(); // Rafraîchit la liste
+      onClose();   // Ferme le modal
+    } catch (error: any) {
+      alert(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
   
   if (!isOpen) return null;
 
@@ -105,22 +132,39 @@ export function AddApartmentModal({ isOpen, onClose, onSuccess, initialData }: P
             formData={formData} 
             onChange={(newData) => setFormData(prev => ({ ...prev, ...newData }))} />
 
-          <div className="mt-10 flex justify-end gap-4">
-            <button 
-              type="button" 
-              onClick={onClose}
-              className="font-bold uppercase text-sm border-2 border-black px-6 py-2 hover:bg-zinc-100"
-            >
-              Annuler
-            </button>
-            <button 
-              type="submit"
-              disabled={loading}
-              className="bg-black text-white font-bold uppercase text-sm px-10 py-3 flex items-center gap-2 hover:bg-zinc-800 disabled:bg-zinc-500"
-            >
-              {loading && <Loader2 className="animate-spin h-4 w-4" />}
-              {loading ? "Création en cours..." : "Enregistrer le bien"}
-            </button>
+          <div className="flex justify-between items-center mt-8 pt-6 border-t border-zinc-200">
+            {/* Bouton Supprimer (visible uniquement en mode édition) */}
+            {initialData ? (
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={loading}
+                className="flex items-center text-red-600 font-bold uppercase text-sm hover:bg-red-50 p-2 transition-colors"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Supprimer le bien
+              </button>
+            ) : (
+              <div></div> // Espaceur pour garder le bouton Enregistrer à droite
+            )}
+
+            <div className="flex gap-4">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={onClose}
+                className="rounded-none border-2 border-black font-bold uppercase"
+              >
+                Annuler
+              </Button>
+              <Button 
+                type="submit" 
+                disabled={loading}
+                className="rounded-none bg-black text-white border-2 border-black font-bold uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+              >
+                {loading ? "Enregistrement..." : initialData ? "Modifier" : "Créer"}
+              </Button>
+            </div>
           </div>
         </form>
       </div>
