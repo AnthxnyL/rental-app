@@ -6,12 +6,19 @@ import { Header } from "@/components/layouts/Header";
 import { AddApartmentModal } from "@/components/Dashboard/AddApartmentModal";
 import { ApartmentTable } from "@/components/Dashboard/ApartmentTable";
 import { ApartmentCard } from "@/components/Dashboard/ApartmentCard";
+import { toast } from "sonner";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
 export default function Dashboard() {
   const [apartments, setApartments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedApartment, setSelectedApartment] = useState<any>(null);
+
+  // États pour la confirmation d'envoi d'email
+  const [isSendConfirmOpen, setIsSendConfirmOpen] = useState(false);
+  const [apartmentToSend, setApartmentToSend] = useState<any>(null);
+  const [isSending, setIsSending] = useState(false);
 
   // 1. Récupération des données
   const fetchApartments = async () => {
@@ -30,6 +37,7 @@ export default function Dashboard() {
       setApartments(data);
     } catch (error) {
       console.error(error);
+      toast.error("Impossible de charger les appartements");
     } finally {
       setLoading(false);
     }
@@ -39,7 +47,7 @@ export default function Dashboard() {
     fetchApartments();
   }, []);
 
-  // 2. Gestion des Modaux
+  // 2. Gestion des Modaux d'Ajout/Edition
   const openEditModal = (apt: any) => {
     setSelectedApartment(apt);
     setIsModalOpen(true);
@@ -50,16 +58,23 @@ export default function Dashboard() {
     setIsModalOpen(true);
   };
 
-  // 3. Logique d'envoi d'email
-  const handleSendEmail = async (apt: any) => {
+  // 3. Logique d'envoi d'email (Ouverture du modal de confirmation)
+  const handleOpenSendConfirm = (apt: any) => {
     const tenantId = apt.tenants?.[0]?.id;
-    
     if (!tenantId) {
-      alert("Aucun locataire associé.");
+      toast.error("Aucun locataire associé à ce bien.");
       return;
     }
+    setApartmentToSend(apt);
+    setIsSendConfirmOpen(true);
+  };
 
-    if (!confirm(`Envoyer la quittance par mail à ${apt.tenants[0].firstname} ?`)) return;
+  // 4. Exécution réelle de l'envoi (Appelée par le ConfirmModal)
+  const handleConfirmSendEmail = async () => {
+    if (!apartmentToSend) return;
+    
+    setIsSending(true);
+    const tenant = apartmentToSend.tenants[0];
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -71,20 +86,24 @@ export default function Dashboard() {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          tenantId: tenantId,
+          tenantId: tenant.id,
           month: new Date().getMonth() + 1,
           year: new Date().getFullYear()
         }),
       });
 
       if (response.ok) {
-        alert("Email envoyé avec succès !");
+        toast.success(`Quittance envoyée avec succès à ${tenant.firstname} !`);
       } else {
         const result = await response.json();
         throw new Error(result.error || "Échec de l'envoi");
       }
     } catch (error: any) {
-      alert("Erreur : " + error.message);
+      toast.error(error.message);
+    } finally {
+      setIsSending(false);
+      setIsSendConfirmOpen(false);
+      setApartmentToSend(null);
     }
   };
 
@@ -111,7 +130,7 @@ export default function Dashboard() {
           </Button>
         </div>
 
-        {/* --- VUE MOBILE : CARDS (visible uniquement sur mobile) --- */}
+        {/* --- VUE MOBILE : CARDS --- */}
         <div className="grid grid-cols-1 gap-6 md:hidden">
           {loading ? (
             <p className="text-center py-10 font-bold uppercase italic">Chargement...</p>
@@ -122,30 +141,41 @@ export default function Dashboard() {
               <ApartmentCard 
                 key={apt.id} 
                 apt={apt} 
-                onSendEmail={handleSendEmail} 
+                onSendEmail={handleOpenSendConfirm} 
                 onEdit={openEditModal} 
               />
             ))
           )}
         </div>
 
-        {/* --- VUE DESKTOP : TABLEAU (visible uniquement sur tablette/PC) --- */}
+        {/* --- VUE DESKTOP : TABLEAU --- */}
         <div className="hidden md:block bg-white border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
           <ApartmentTable 
             apartments={apartments} 
             loading={loading} 
-            onSendEmail={handleSendEmail} 
+            onSendEmail={handleOpenSendConfirm} 
             onEdit={openEditModal} 
           />
         </div>
       </main>
 
-      {/* Modal unique pour l'ajout et la modification */}
+      {/* Modal Ajout / Edition */}
       <AddApartmentModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
         onSuccess={fetchApartments}
         initialData={selectedApartment}
+      />
+
+      {/* Modal Confirmation Envoi Email */}
+      <ConfirmModal 
+        isOpen={isSendConfirmOpen}
+        onClose={() => setIsSendConfirmOpen(false)}
+        onConfirm={handleConfirmSendEmail}
+        textButton="Envoyer"
+        title="Confirmer l'envoi ?"
+        message={`Voulez-vous envoyer la quittance de loyer par email à ${apartmentToSend?.tenants?.[0]?.firstname} ${apartmentToSend?.tenants?.[0]?.lastname} ?`}
+        loading={isSending}
       />
     </div>
   );

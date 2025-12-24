@@ -1,10 +1,11 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import SigninPage from "./pages/SigninPage"; // Vérifie tes chemins
+import SigninPage from "./pages/SigninPage";
 import SignupPage from "./pages/SignupPage";
 import Dashboard from "./pages/Dashboard";
 import type { Session } from "@supabase/supabase-js";
+import { Toaster } from "sonner";
 
 function App() {
   const [session, setSession] = useState<Session | null>(null);
@@ -29,6 +30,7 @@ function App() {
 
   return (
     <Router>
+      <Toaster position="top-right" richColors />
       <Routes>
         {/* Routes Publiques */}
         <Route path="/signin" element={!session ? <SigninPage /> : <Navigate to="/dashboard" />} />
