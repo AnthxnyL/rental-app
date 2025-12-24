@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { supabase } from '../config/supabase';
+import { dbCreateApartment, dbCreateTenant } from '../services/dbService';
 
 export const getApartments = async (req: any, res: Response) => {
   try {
@@ -36,19 +37,64 @@ export const getApartmentById = async (req: any, res: Response) => {
 };
 
 export const createApartment = async (req: any, res: Response) => {
-  const { address, city, zip_code, rent_hc, charges } = req.body;
-  const owner_id = req.user.id;
-
   try {
-    const { data, error } = await supabase
-      .from('apartments')
-      .insert([{ address, city, zip_code, rent_hc, charges, owner_id }])
-      .select()
-      .single();
-
-    if (error) throw error;
+    const data = await dbCreateApartment(req.body, req.user.id);
     res.status(201).json(data);
   } catch (error: any) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+export const createFullProperty = async (req: any, res: Response) => {
+  const owner_id = req.user.id;
+
+  // 1. On récupère l'email en amont
+  const { email } = req.body;
+  console.log("createFullProperty appelé avec email:", req.body);
+
+  // 2. Sécurité : Si l'email est absent, on arrête tout de suite proprement
+  if (!email) {
+    return res.status(400).json({ error: "L'adresse email du locataire est manquante dans la requête." });
+  }
+
+  try {
+    // 3. On utilise l'email nettoyé
+    const cleanEmail = email.toLowerCase().trim();
+
+    let { data: tenant, error: searchError } = await supabase
+      .from('tenants')
+      .select('id')
+      .eq('email', cleanEmail)
+      .eq('owner_id', owner_id) // Sécurité : on vérifie que c'est un locataire à VOUS
+      .maybeSingle();
+
+    if (searchError) throw searchError;
+
+    // 4. Si le locataire n'existe pas, on le crée
+    if (!tenant) {
+      // On passe le body avec l'email nettoyé au cas où
+      tenant = await dbCreateTenant({ ...req.body, email: cleanEmail }, owner_id);
+    }
+
+    // 5. On crée l'appartement
+    const apartment = await dbCreateApartment(req.body, owner_id);
+
+    // 6. On lie l'appartement au locataire
+    const { error: updateError } = await supabase
+      .from('tenants')
+      .update({ apartment_id: apartment.id })
+      .eq('id', tenant?.id);
+
+    if (updateError) throw updateError;
+
+    res.status(201).json({ 
+      message: "Bien et locataire créés avec succès !", 
+      apartment, 
+      tenant 
+    });
+
+  } catch (error: any) {
+    console.error("Erreur createFullProperty:", error.message);
     res.status(400).json({ error: error.message });
   }
 };

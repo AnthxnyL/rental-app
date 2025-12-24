@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { supabase } from '../config/supabase';
+import { dbCreateTenant } from '../services/dbService';
 
 // 1. Récupérer tous les locataires du propriétaire
 export const getTenants = async (req: any, res: Response) => {
@@ -78,17 +79,8 @@ export const fetchFullTenantData = async (tenantId: string, ownerId: string) => 
 
 // 2. Créer un locataire
 export const createTenant = async (req: any, res: Response) => {
-  const { first_name, last_name, email, phone, apartment_id } = req.body;
-  const owner_id = req.user.id;
-
   try {
-    const { data, error } = await supabase
-      .from('tenants')
-      .insert([{ first_name, last_name, email, phone, apartment_id, owner_id }])
-      .select()
-      .single();
-
-    if (error) throw error;
+    const data = await dbCreateTenant(req.body, req.user.id);
     res.status(201).json(data);
   } catch (error: any) {
     res.status(400).json({ error: error.message });

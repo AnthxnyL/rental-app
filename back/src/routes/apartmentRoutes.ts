@@ -5,17 +5,18 @@ import {
   createApartment, 
   deleteApartment,
   updateApartment,
-  getApartmentById
+  getApartmentById,
+  createFullProperty
 } from '../controllers/apartmentController';
 
 const router = Router();
 
 router.use(authenticate);
 
-router.get('/', getApartments);
-router.get('/:id', getApartmentById);
-router.post('/', createApartment);
-router.delete('/:id', deleteApartment);
-router.put('/:id', updateApartment);
+router.get('/', authenticate, getApartments);
+router.get('/:id', authenticate, getApartmentById);
+router.post('/', authenticate, createFullProperty);
+router.delete('/:id', authenticate, deleteApartment);
+router.put('/:id', authenticate, updateApartment);
 
 export default router;

@@ -22,44 +22,32 @@ export function AddApartmentModal({ isOpen, onClose, onSuccess }: Props) {
 
   try {
     const { data: { session } } = await supabase.auth.getSession();
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.access_token}`,
-    };
-
-    // 1. APPEL APPARTEMENT
-    const aptRes = await fetch(`${import.meta.env.VITE_API_URL}/api/apartments`, {
+    
+    // UN SEUL APPEL vers /api/apartments
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/apartments`, {
       method: "POST",
-      headers,
-      body: JSON.stringify({
-        address: formData.address,
-        zip_code: formData.zip_code,
-        city: formData.city,
-        rent_hc: formData.rent_hc,
-        charges: formData.charges,
-      }),
-    });
-    const apartment = await aptRes.json();
-    if (!aptRes.ok) throw new Error(apartment.error);
-
-    // 2. APPEL LOCATAIRE (en utilisant l'ID de l'appartement reçu)
-    const tenantRes = await fetch(`${import.meta.env.VITE_API_URL}/api/tenants`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
-        first_name: formData.first_name,
-        last_name: formData.last_name,
-        email: formData.email,
-        phone: formData.phone,
-        apartment_id: apartment.id // On lie les deux ici
-      }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.access_token}`,
+      },
+      // On envoie TOUT le formData (qui contient adresse + email + nom, etc.)
+      body: JSON.stringify(formData), 
     });
 
-    if (!tenantRes.ok) throw new Error("Erreur locataire");
+    const result = await response.json();
 
-    onSuccess();
-    onClose();
-  } catch (error) {
+    if (!response.ok) {
+      throw new Error(result.error || "Erreur lors de la création");
+    }
+
+    // Si on arrive ici, le back a créé l'appart ET le locataire (ou utilisé un existant)
+    console.log("Succès:", result.message);
+    
+    setFormData(initialPropertyState); // Reset le formulaire
+    onSuccess(); // Rafraîchit le dashboard
+    onClose();   // Ferme la pop-up
+    
+  } catch (error: any) {
     alert(error.message);
   } finally {
     setLoading(false);
@@ -80,8 +68,7 @@ export function AddApartmentModal({ isOpen, onClose, onSuccess }: Props) {
         <form onSubmit={handleSubmit} className="p-8">
           <PropertyFormFields 
             formData={formData} 
-            onChange={(newData) => setFormData({ ...formData, ...newData })} 
-          />
+            onChange={(newData) => setFormData(prev => ({ ...prev, ...newData }))} />
 
           <div className="mt-10 flex justify-end gap-4">
             <button 
