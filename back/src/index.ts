@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 5001;
 app.use(cors({
   origin: [
     'http://localhost:5173',
-    "https://rental-app-mauve.vercel.app/signin"
+    "https://rental-app-1e1u.onrender.com"
   ]
 }));
 app.use(express.json());
