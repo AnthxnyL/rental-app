@@ -123,23 +123,29 @@ export const deleteApartment = async (req: any, res: Response) => {
 };
 
 export const updateApartment = async (req: any, res: Response) => {
-  const { id } = req.params;
-  const { address, city, zip_code, rent_hc, charges } = req.body;
+  const { id } = req.params; // ID de l'appartement
+  const { address, zip_code, city, rent_hc, charges, firstname, lastname, email, phone } = req.body;
+  const ownerId = req.user.id;
 
   try {
-    const { data, error } = await supabase
+    const { error: aptError } = await supabase
       .from('apartments')
-      .update({ address, city, zip_code, rent_hc, charges })
+      .update({ address, zip_code, city, rent_hc, charges })
       .eq('id', id)
-      .eq('owner_id', req.user.id)
-      .select()
-      .single();
+      .eq('owner_id', ownerId);
 
-    if (error) throw error;
-    if (!data) return res.status(404).json({ error: "Appartement non trouvé ou non autorisé" });
+    if (aptError) throw aptError;
 
-    res.json(data);
+    const { error: tenantError } = await supabase
+      .from('tenants')
+      .update({ firstname, lastname, email, phone })
+      .eq('apartment_id', id);
+
+    if (tenantError) throw tenantError;
+
+    res.json({ message: "Appartement et locataire mis à jour avec succès !" });
   } catch (error: any) {
-    res.status(400).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: error.message });
   }
 };

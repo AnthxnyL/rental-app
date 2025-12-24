@@ -45,14 +45,14 @@ export function AddApartmentModal({ isOpen, onClose, onSuccess, initialData }: P
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const isEditing = !!initialData;
+      
+      // Si on édite, l'URL contient l'ID : /api/apartments/123
       const url = isEditing 
         ? `${import.meta.env.VITE_API_URL}/api/apartments/${initialData.id}`
         : `${import.meta.env.VITE_API_URL}/api/apartments`;
 
-      const method = isEditing ? "PUT" : "POST";
-      
       const response = await fetch(url, {
-        method,
+        method: isEditing ? "PUT" : "POST", // Méthode PUT pour la modification
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.access_token}`,
@@ -60,14 +60,14 @@ export function AddApartmentModal({ isOpen, onClose, onSuccess, initialData }: P
         body: JSON.stringify(formData), 
       });
 
-      const result = await response.json();
+      if (!response.ok) {
+        const result = await response.json();
+        throw new Error(result.error || "Erreur lors de la sauvegarde");
+      }
 
-      if (!response.ok) throw new Error(result.error || "Erreur lors de l'enregistrement");
-
-      toast.success(isEditing ? "Bien modifié !" : "Bien créé !");
-      setFormData(initialPropertyState);
-      onSuccess();
-      onClose();
+      toast.success(isEditing ? "Informations mises à jour !" : "Bien créé !");
+      onSuccess(); // Re-charge la liste du Dashboard
+      onClose();   // Ferme le modal
       
     } catch (error: any) {
       toast.error(error.message);
@@ -105,7 +105,7 @@ export function AddApartmentModal({ isOpen, onClose, onSuccess, initialData }: P
 
   return (
     <>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+      <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
         <div className="bg-white border-4 border-black w-full max-w-4xl shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
           {/* Header */}
           <div className="bg-black text-white p-6 flex justify-between items-center">
