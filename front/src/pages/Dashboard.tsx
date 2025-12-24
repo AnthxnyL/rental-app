@@ -121,50 +121,73 @@ export default function Dashboard() {
           <Table>
             <TableHeader className="bg-black">
               <TableRow className="hover:bg-black border-none">
-                <TableHead className="text-white font-bold uppercase py-4">Bien / Adresse</TableHead>
-                <TableHead className="text-white font-bold uppercase py-4">Ville</TableHead>
+                <TableHead className="text-white font-bold uppercase py-4 text-center">Locataire</TableHead>
+                <TableHead className="text-white font-bold uppercase py-4 text-center">Bien / Adresse</TableHead>
+                <TableHead className="text-white font-bold uppercase py-4 text-center">Ville</TableHead>
                 <TableHead className="text-white font-bold uppercase py-4 text-center">Loyer (Charges incl.)</TableHead>
-                <TableHead className="text-white font-bold uppercase py-4 text-right">Actions</TableHead>
+                <TableHead className="text-white font-bold uppercase py-4 text-center">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
-                <TableRow><TableCell colSpan={4} className="text-center py-10 font-bold uppercase italic">Chargement...</TableCell></TableRow>
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-10 font-bold uppercase italic">
+                    Chargement...
+                  </TableCell>
+                </TableRow>
               ) : apartments.length === 0 ? (
-                <TableRow><TableCell colSpan={4} className="text-center py-10 font-bold uppercase italic text-zinc-400">Aucun appartement trouvé.</TableCell></TableRow>
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-10 font-bold uppercase italic text-zinc-400">
+                    Aucun appartement trouvé.
+                  </TableCell>
+                </TableRow>
               ) : (
-                apartments.map((apt) => (
-                  <TableRow key={apt.id} className="border-b border-zinc-200 hover:bg-zinc-50 transition-colors">
-                    <TableCell className="font-bold py-6">{apt.address}</TableCell>
-                    <TableCell className="font-medium">{apt.city} ({apt.zip_code})</TableCell>
-                    <TableCell className="text-center font-bold">
-                      {Number(apt.rent_hc) + Number(apt.charges)} €
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        {/* NOUVEAU BOUTON MAIL */}
-                        <Button 
-                          variant="outline" 
-                          size="icon" 
-                          className="rounded-none border-black bg-yellow-400 hover:bg-yellow-500 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all"
-                          onClick={() => handleSendEmail(apt)}
-                          title="Envoyer la quittance"
-                        >
-                          <Mail className="h-4 w-4" />
-                        </Button>
+                // ICI : Pas d'accolades autour du apartments.map
+                apartments.map((apt) => {
+                  const tenant = apt.tenants?.[0];
+                  return (
+                    <TableRow key={apt.id} className="border-b border-zinc-200 hover:bg-zinc-50 transition-colors">
+                      <TableCell className="text-center italic">
+                        {tenant ? (
+                          <span className="font-bold text-black not-italic uppercase">
+                            {tenant.firstname} {tenant.lastname}
+                          </span>
+                        ) : (
+                          <span className="text-zinc-400">Aucun locataire</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="font-bold py-6 text-center">{apt.address}</TableCell>
+                      <TableCell className="font-medium text-center">
+                        {apt.city} ({apt.zip_code})
+                      </TableCell>
+                      <TableCell className="text-center font-bold">
+                        {Number(apt.rent_hc) + Number(apt.charges)} €
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <div className="flex justify-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="rounded-none border-black bg-yellow-400 hover:bg-yellow-500 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all"
+                            onClick={() => handleSendEmail(apt)}
+                            title="Envoyer la quittance"
+                          >
+                            <Mail className="h-4 w-4" />
+                          </Button>
 
-                       <Button 
-                          variant="outline" 
-                          size="icon" 
-                          className="rounded-none border-black hover:bg-zinc-100"
-                          onClick={() => openEditModal(apt)}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>     
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="rounded-none border-black hover:bg-zinc-100"
+                            onClick={() => openEditModal(apt)}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
               )}
             </TableBody>
           </Table>
