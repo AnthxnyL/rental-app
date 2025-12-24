@@ -164,7 +164,6 @@ export function AddApartmentModal({ isOpen, onClose, onSuccess, initialData }: P
         isOpen={isConfirmOpen}
         onClose={() => setIsConfirmOpen(false)}
         onConfirm={handleConfirmDelete}
-        textButton="Supprimer"
         title="Attention !"
         message="Voulez-vous vraiment supprimer ce bien ?"
         loading={loading}
