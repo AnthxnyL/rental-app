@@ -4,8 +4,8 @@ export const PROPERTY_FORM_INITIAL_STATE = {
     city: '',
     rent_hc: 0,
     charges: 0,
-    first_name: '',
-    last_name: '',
+    firstname: '',
+    lastname: '',
     email: '',
     phone: ''
 };

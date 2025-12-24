@@ -42,6 +42,7 @@ export function PropertyFormFields({ formData, onChange }: Props) {
             type="number"
             className="border-2 border-black p-3 font-bold outline-none"
             placeholder="LOYER HC (€)"
+            value={formData.rent_hc || 0}
             onChange={(e) => onChange({ rent_hc: Number(e.target.value) })}
             required
           />
@@ -49,6 +50,7 @@ export function PropertyFormFields({ formData, onChange }: Props) {
             type="number"
             className="border-2 border-black p-3 font-bold outline-none"
             placeholder="CHARGES (€)"
+            value={formData.charges || 0}
             onChange={(e) => onChange({ charges: Number(e.target.value) })}
             required
           />
@@ -63,15 +65,15 @@ export function PropertyFormFields({ formData, onChange }: Props) {
         <input 
           className="w-full border-2 border-black p-3 font-bold outline-none"
           placeholder="NOM"
-          value={formData.last_name}
-          onChange={(e) => onChange({ last_name: e.target.value })}
+          value={formData.lastname}
+          onChange={(e) => onChange({ lastname: e.target.value })}
           required
         />
         <input 
           className="w-full border-2 border-black p-3 font-bold outline-none"
           placeholder="PRÉNOM"
-          value={formData.first_name}
-          onChange={(e) => onChange({ first_name: e.target.value })}
+          value={formData.firstname}
+          onChange={(e) => onChange({ firstname: e.target.value })}
           required
         />
         <input 

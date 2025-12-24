@@ -6,8 +6,8 @@ export interface PropertyFormData {
   rent_hc: number;
   charges: number;
   // Locataire
-  first_name: string;
-  last_name: string;
+  firstname: string;
+  lastname: string;
   email: string;
   phone: string;
 }
@@ -18,8 +18,8 @@ export const initialPropertyState: PropertyFormData = {
   city: '',
   rent_hc: 0,
   charges: 0,
-  first_name: '',
-  last_name: '',
+  firstname: '',
+  lastname: '',
   email: '',
   phone: ''
 };

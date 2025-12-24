@@ -57,6 +57,7 @@ export default function Dashboard() {
         setApartments(apartments.filter((apt) => apt.id !== id));
       }
     } catch (error) {
+      console.error(error);
       alert("Erreur lors de la suppression");
     }
   };
@@ -147,11 +148,12 @@ export default function Dashboard() {
       </main>
 
       {/* Modal partagé Ajout / Edition */}
-      <AddApartmentModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        onSuccess={fetchApartments}
-      />
+     <AddApartmentModal 
+      isOpen={isModalOpen} 
+      onClose={() => setIsModalOpen(false)} 
+      onSuccess={fetchApartments}
+      initialData={selectedApartment}
+    />
     </div>
   );
 }

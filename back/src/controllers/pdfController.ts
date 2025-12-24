@@ -14,7 +14,7 @@ export const generatePdf = async (req: any, res: Response) => {
 
     const doc = new PDFDocument({ size: 'A4', margin: 50 });
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename=Quittance_${tenant.last_name}.pdf`);
+    res.setHeader('Content-Disposition', `attachment; filename=Quittance_${tenant.lastname}.pdf`);
     
     doc.pipe(res);
     drawReceiptContent(doc, tenant, month as string, year as string);
@@ -47,7 +47,7 @@ export const sendReceiptEmail = async (req: any, res: Response) => {
         subject: `Quittance de loyer - ${monthName} ${year}`,
         html: `
             <div style="font-family: sans-serif; line-height: 1.5; color: #333;">
-            <p>Bonjour <strong>${tenant.first_name} ${tenant.last_name}</strong>,</p>
+            <p>Bonjour <strong>${tenant.firstname} ${tenant.lastname}</strong>,</p>
             
             <p>Nous vous confirmons la bonne réception de votre règlement pour le loyer du mois de <strong>${monthName} ${year}</strong>.</p>
             
@@ -71,7 +71,7 @@ export const sendReceiptEmail = async (req: any, res: Response) => {
         `,
         attachments: [
             {
-            filename: `Quittance_${tenant.last_name}_${monthName}_${year}.pdf`,
+            filename: `Quittance_${tenant.lastname}_${monthName}_${year}.pdf`,
             content: pdfBuffer,
             },
         ],

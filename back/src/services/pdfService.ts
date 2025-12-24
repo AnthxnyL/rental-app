@@ -34,7 +34,7 @@ export const drawReceiptContent = (doc: typeof PDFKit, tenant: any, month: strin
 
     // Colonne droite - Locataire
     doc.font('Helvetica-Bold').fontSize(10).text('Locataire :', rightCol, currentY);
-    doc.font('Helvetica').fontSize(10).text(`${tenant.last_name} ${tenant.first_name}`, rightCol, currentY + 15);
+    doc.font('Helvetica').fontSize(10).text(`${tenant.lastname} ${tenant.firstname}`, rightCol, currentY + 15);
     doc.font('Helvetica').text(`${tenant.phone}`, rightCol, currentY + 30);
     doc.font('Helvetica-Bold').text('Adresse du locataire :', rightCol, currentY + 65);
     doc.font('Helvetica').text(`${tenant.apartments.address}`, rightCol, currentY + 80);
@@ -53,7 +53,7 @@ export const drawReceiptContent = (doc: typeof PDFKit, tenant: any, month: strin
 
     doc.moveDown(2);
 
-    const mainText = `Je soussigné(e) ${tenant.profiles.lastname} ${tenant.profiles.firstname}, propriétaire du logement susmentionné, confirme avoir reçu de Monsieur / Madame ${tenant.last_name} ${tenant.first_name} la somme de ${totalAmount.toFixed(2)} euros en paiement du loyer et des charges pour la période du 01/${formattedMonth}/${year} au ${lastDay}/${formattedMonth}/${year}, et en donne quittance sous réserve de tous mes droits.`;
+    const mainText = `Je soussigné(e) ${tenant.profiles.lastname} ${tenant.profiles.firstname}, propriétaire du logement susmentionné, confirme avoir reçu de Monsieur / Madame ${tenant.lastname} ${tenant.firstname} la somme de ${totalAmount.toFixed(2)} euros en paiement du loyer et des charges pour la période du 01/${formattedMonth}/${year} au ${lastDay}/${formattedMonth}/${year}, et en donne quittance sous réserve de tous mes droits.`;
         doc.text(mainText, leftCol, doc.y, { width: 500, align: 'justify' });
 
     doc.moveDown(2);

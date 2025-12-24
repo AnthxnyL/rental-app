@@ -6,7 +6,10 @@ export const getApartments = async (req: any, res: Response) => {
   try {
     const { data, error } = await supabase
       .from('apartments')
-      .select('*')
+       .select(`
+        *,
+        tenants!tenants_apartment_id_fkey (*)
+      `)
       .eq('owner_id', req.user.id);
 
     if (error) throw error;
@@ -22,10 +25,14 @@ export const getApartmentById = async (req: any, res: Response) => {
   try {
     const { data, error } = await supabase
       .from('apartments')
-      .select('*')
+      .select(`
+        *,
+        tenants!tenants_apartment_id_fkey (*)
+      `)
       .eq('id', id)
       .eq('owner_id', req.user.id)
       .single();
+    console.log("getApartmentById data:", data);
 
     if (error) throw error;
     if (!data) return res.status(404).json({ error: "Appartement non trouvé" });
