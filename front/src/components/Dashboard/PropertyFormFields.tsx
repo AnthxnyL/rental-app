@@ -71,26 +71,36 @@ export function PropertyFormFields({ formData, onChange }: Props) {
         <div className="flex items-center gap-2 font-black uppercase text-sm border-b-2 border-black pb-2">
           <UserCircle size={18} /> <span>Le Locataire</span>
         </div>
-        <Input 
-          className="border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0"
-          placeholder="NOM"
-          value={formData.lastname}
-          onChange={handleInputChange('lastname')}
-          required
-        />
-        <Input 
-          className="border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0"
-          placeholder="PRÉNOM"
-          value={formData.firstname}
-          onChange={handleInputChange('firstname')}
-          required
-        />
+        <div className="grid grid-cols-2 gap-2">
+          <Input 
+            className="border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0"
+            placeholder="NOM"
+            value={formData.lastname}
+            onChange={handleInputChange('lastname')}
+            required
+          />
+          <Input 
+            className="border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0"
+            placeholder="PRÉNOM"
+            value={formData.firstname}
+            onChange={handleInputChange('firstname')}
+            required
+          /> 
+        </div>
         <Input 
           type="email"
           className="border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0"
           placeholder="EMAIL"
           value={formData.email}
           onChange={handleInputChange('email')}
+          required
+        />
+        <Input 
+          type="phone"
+          className="border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0"
+          placeholder="TELEPHONE"
+          value={formData.phone}
+          onChange={handleInputChange('phone')}
           required
         />
       </div>
