@@ -31,3 +31,20 @@ export const createProfile = async (req: Request<{}, {}, SignupRequest>, res: Re
     res.status(400).json({ error: error.message });
   }
 };
+
+export const updateProfile = async (req: any, res: Response) => {
+  const userId = req.user.id;
+  const { firstname, lastname, phone, address, zip_code, city, lmnp_number } = req.body;
+
+  try {
+    const { error } = await supabase
+      .from('profiles')
+      .update({ firstname, lastname, phone, address, zip_code, city, lmnp_number })
+      .eq('id', userId);
+
+    if (error) throw error;
+    res.json({ message: "Profil mis à jour" });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};

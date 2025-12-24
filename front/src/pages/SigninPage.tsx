@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
+import { Input } from "@/components/ui/input";
 
 export default function SigninPage() {
   const [email, setEmail] = useState("");
@@ -35,13 +34,19 @@ export default function SigninPage() {
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label className="uppercase text-[10px] font-bold">Email</Label>
-              <Input type="email" className="border-black rounded-none h-11 focus-visible:ring-0" required
+              <Input 
+                type="email" 
+                className="border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0" 
+                placeholder="EMAIL"
+                required                
                 onChange={(e) => setEmail(e.target.value)} />
             </div>
             <div className="space-y-2">
-              <Label className="uppercase text-[10px] font-bold">Mot de passe</Label>
-              <Input type="password" className="border-black rounded-none h-11 focus-visible:ring-0" required
+              <Input 
+                type="password" 
+                placeholder="MOT DE PASSE"
+                className="border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0" 
+                required
                 onChange={(e) => setPassword(e.target.value)} />
             </div>
             <Button className="w-full bg-black text-white hover:bg-zinc-800 rounded-none h-12 font-bold uppercase" disabled={loading}>

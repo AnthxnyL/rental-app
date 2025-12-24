@@ -14,7 +14,7 @@ export interface Apartment {
   owner_id: string;
   address: string;
   city: string;
-  postal_code: string;
+  zip_code: string;
   rent_hc: number;
   charges: number;
 }
