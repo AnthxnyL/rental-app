@@ -117,7 +117,7 @@ export function AddApartmentModal({ isOpen, onClose, onSuccess, initialData }: P
 
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
       <div className="bg-white border-4 border-black w-full max-w-4xl shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
         {/* Header */}
         <div className="bg-black text-white p-6 flex justify-between items-center">
@@ -132,23 +132,8 @@ export function AddApartmentModal({ isOpen, onClose, onSuccess, initialData }: P
             formData={formData} 
             onChange={(newData) => setFormData(prev => ({ ...prev, ...newData }))} />
 
-          <div className="flex justify-between items-center mt-8 pt-6 border-t border-zinc-200">
-            {/* Bouton Supprimer (visible uniquement en mode édition) */}
-            {initialData ? (
-              <button
-                type="button"
-                onClick={handleDelete}
-                disabled={loading}
-                className="flex items-center text-red-600 font-bold uppercase text-sm hover:bg-red-50 p-2 transition-colors"
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
-                Supprimer le bien
-              </button>
-            ) : (
-              <div></div> // Espaceur pour garder le bouton Enregistrer à droite
-            )}
-
-            <div className="flex gap-4">
+          <div className="flex flex-col md:flex-row md:justify-between items-center mt-8 pt-6 border-t border-zinc-200 gap-4">
+            <div className="flex gap-4 md:order-last">
               <Button 
                 type="button" 
                 variant="outline" 
@@ -165,6 +150,19 @@ export function AddApartmentModal({ isOpen, onClose, onSuccess, initialData }: P
                 {loading ? "Enregistrement..." : initialData ? "Modifier" : "Créer"}
               </Button>
             </div>
+
+            {/* Bouton Supprimer (visible uniquement en mode édition) */}
+            {initialData && (
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={loading}
+                className="flex items-center text-red-600 font-bold uppercase text-sm hover:bg-red-50 p-2 transition-colors md:self-start"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Supprimer le bien
+              </button>
+            )}
           </div>
         </form>
       </div>
