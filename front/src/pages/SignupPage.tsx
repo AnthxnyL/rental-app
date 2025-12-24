@@ -3,11 +3,10 @@ import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 
 export default function SignupPage() {
-  const [formData, setFormData] = useState({ email: "", password: "", firstname: "", lastname: "" });
+  const [formData, setFormData] = useState({ email: "", password: "", firstname: "", lastname: "", phone: "" });
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,6 +32,7 @@ export default function SignupPage() {
             email: formData.email,
             firstname: formData.firstname,
             lastname: formData.lastname,
+            phone: formData.phone,
           }),
         });
 
@@ -57,26 +57,75 @@ export default function SignupPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="uppercase text-[10px] font-bold">Prénom</Label>
-                <Input className="border-black rounded-none h-11 focus-visible:ring-0" required
+                <Input 
+                  className="border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0" 
+                  placeholder="PRÉNOM"
+                  required
                   onChange={(e) => setFormData({...formData, firstname: e.target.value})} />
               </div>
               <div className="space-y-2">
-                <Label className="uppercase text-[10px] font-bold">Nom</Label>
-                <Input className="border-black rounded-none h-11 focus-visible:ring-0" required
+                <Input 
+                  className="border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0" 
+                  placeholder="NOM"
+                  required
                   onChange={(e) => setFormData({...formData, lastname: e.target.value})} />
               </div>
             </div>
             <div className="space-y-2">
-              <Label className="uppercase text-[10px] font-bold">Email</Label>
-              <Input type="email" className="border-black rounded-none h-11 focus-visible:ring-0" required
+              <Input 
+                placeholder="ADRESSE"
+                className="border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0" 
+                required
+                onChange={(e) => setFormData({...formData, phone: e.target.value})} />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Input 
+                  placeholder="VILLE"
+                  className="border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0" 
+                  required
+                  onChange={(e) => setFormData({...formData, phone: e.target.value})} />
+              </div>
+              <div className="space-y-2">
+                <Input 
+                  placeholder="CODE POSTAL"
+                  className="border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0" 
+                  required
+                  onChange={(e) => setFormData({...formData, phone: e.target.value})} />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Input 
+                type="email" 
+                className="border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0" 
+                placeholder="EMAIL"
+                required
                 onChange={(e) => setFormData({...formData, email: e.target.value})} />
             </div>
             <div className="space-y-2">
-              <Label className="uppercase text-[10px] font-bold">Mot de passe</Label>
-              <Input type="password" title="6 caractères min." className="border-black rounded-none h-11 focus-visible:ring-0" required
+              <Input 
+                placeholder="N° LMNP"
+                className="border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0" 
+                onChange={(e) => setFormData({...formData, phone: e.target.value})} />
+            </div>
+            <div className="space-y-2">
+              <Input 
+                type="phone" 
+                placeholder="TÉLÉPHONE"
+                className="border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0" 
+                required
+                onChange={(e) => setFormData({...formData, phone: e.target.value})} />
+            </div>
+            <div className="space-y-2">
+              <Input 
+                type="password" 
+                placeholder="MOT DE PASSE"
+                title="6 caractères min." 
+                className="border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0" 
+                required
                 onChange={(e) => setFormData({...formData, password: e.target.value})} />
             </div>
+
             <Button className="w-full bg-black text-white hover:bg-zinc-800 rounded-none h-12 font-bold uppercase transition-all" disabled={loading}>
               {loading ? "Création..." : "S'inscrire"}
             </Button>

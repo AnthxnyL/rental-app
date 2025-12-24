@@ -1,5 +1,6 @@
 import { type PropertyFormData } from "@/types/property";
 import { Building2, UserCircle } from "lucide-react";
+import { Input } from "../ui/input";
 
 interface Props {
   formData: PropertyFormData;
@@ -7,6 +8,14 @@ interface Props {
 }
 
 export function PropertyFormFields({ formData, onChange }: Props) {
+  const handleInputChange = (field: keyof PropertyFormData) => (e: any) => {
+    onChange({ [field]: e.target.value });
+  };
+
+  const handleNumberChange = (field: keyof PropertyFormData) => (e: any) => {
+    onChange({ [field]: Number(e.target.value) });
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
       {/* SECTION APPARTEMENT */}
@@ -14,44 +23,44 @@ export function PropertyFormFields({ formData, onChange }: Props) {
         <div className="flex items-center gap-2 font-black uppercase text-sm border-b-2 border-black pb-2">
           <Building2 size={18} /> <span>Le Bien Immobilier</span>
         </div>
-        <input 
-          className="w-full border-2 border-black p-3 font-bold focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] outline-none transition-all"
+        <Input 
+          className="border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0"
           placeholder="ADRESSE"
           value={formData.address}
-          onChange={(e) => onChange({ address: e.target.value })}
+          onChange={handleInputChange('address')}
           required
         />
         <div className="grid grid-cols-3 gap-2">
-          <input 
-            className="col-span-1 border-2 border-black p-3 font-bold outline-none"
+          <Input 
+            className="col-span-1 border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0"
             placeholder="CP"
             value={formData.zip_code}
-            onChange={(e) => onChange({ zip_code: e.target.value })}
+            onChange={handleInputChange('zip_code')}
             required
           />
-          <input 
-            className="col-span-2 border-2 border-black p-3 font-bold outline-none"
+          <Input 
+            className="col-span-2 border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0"
             placeholder="VILLE"
             value={formData.city}
-            onChange={(e) => onChange({ city: e.target.value })}
+            onChange={handleInputChange('city')}
             required
           />
         </div>
         <div className="grid grid-cols-2 gap-2">
-          <input 
+          <Input 
             type="number"
-            className="border-2 border-black p-3 font-bold outline-none"
+            className="border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0"
             placeholder="LOYER HC (€)"
             value={formData.rent_hc || 0}
-            onChange={(e) => onChange({ rent_hc: Number(e.target.value) })}
+            onChange={handleNumberChange('rent_hc')}
             required
           />
-          <input 
+          <Input 
             type="number"
-            className="border-2 border-black p-3 font-bold outline-none"
+            className="border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0"
             placeholder="CHARGES (€)"
             value={formData.charges || 0}
-            onChange={(e) => onChange({ charges: Number(e.target.value) })}
+            onChange={handleNumberChange('charges')}
             required
           />
         </div>
@@ -62,26 +71,26 @@ export function PropertyFormFields({ formData, onChange }: Props) {
         <div className="flex items-center gap-2 font-black uppercase text-sm border-b-2 border-black pb-2">
           <UserCircle size={18} /> <span>Le Locataire</span>
         </div>
-        <input 
-          className="w-full border-2 border-black p-3 font-bold outline-none"
+        <Input 
+          className="border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0"
           placeholder="NOM"
           value={formData.lastname}
-          onChange={(e) => onChange({ lastname: e.target.value })}
+          onChange={handleInputChange('lastname')}
           required
         />
-        <input 
-          className="w-full border-2 border-black p-3 font-bold outline-none"
+        <Input 
+          className="border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0"
           placeholder="PRÉNOM"
           value={formData.firstname}
-          onChange={(e) => onChange({ firstname: e.target.value })}
+          onChange={handleInputChange('firstname')}
           required
         />
-        <input 
+        <Input 
           type="email"
-          className="w-full border-2 border-black p-3 font-bold outline-none"
+          className="border-2 border-black p-3 font-bold outline-none rounded-none h-11 focus-visible:ring-0"
           placeholder="EMAIL"
           value={formData.email}
-          onChange={(e) => onChange({ email: e.target.value })}
+          onChange={handleInputChange('email')}
           required
         />
       </div>
