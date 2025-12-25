@@ -3,18 +3,21 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT) || 587,
-  secure: false, // false pour 587
+  host: 'smtp.gmail.com', // Force l'écriture directe pour tester
+  port: 587,
+  secure: false,
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
+  // --- AJOUTE CECI ---
+  dnsTimeout: 10000,
+  connectionTimeout: 20000,
+  // -------------------
   tls: {
-    rejectUnauthorized: false
-  },
-  connectionTimeout: 20000, // Augmenté pour la prod
-  greetingTimeout: 20000,
+    rejectUnauthorized: false,
+    minVersion: 'TLSv1.2' // Force une version de TLS moderne
+  }
 });
 
 // Vérification silencieuse au démarrage du serveur
