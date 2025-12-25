@@ -2,7 +2,7 @@ import { Response } from 'express';
 import PDFDocument from 'pdfkit';
 import { fetchFullTenantData } from './tenantController';
 import { drawReceiptContent } from '../services/pdfService';
-import { transporter } from '../config/mailer';
+import { sendEmailViaAPI } from '../config/mailer';
 import { getMonthName } from '../utils/date';
 
 /**
@@ -69,25 +69,14 @@ export const sendReceiptEmail = async (req: any, res: Response) => {
     // Étape 2: Envoyer le mail
     console.log(`[SMTP] Tentative d'envoi à ${tenant.email}...`);
     
-    await transporter.sendMail({
-      from: `"Gestion Locative" <${process.env.SMTP_USER}>`,
-      to: tenant.email,
-      subject: `Quittance de loyer - ${monthName} ${y}`,
-      html: `
-        <div style="font-family: sans-serif; color: #333;">
-          <p>Bonjour <strong>${tenant.firstname} ${tenant.lastname}</strong>,</p>
-          <p>Votre loyer pour <strong>${monthName} ${y}</strong> a été réceptionné.</p>
-          <p>Veuillez trouver votre quittance en pièce jointe.</p>
-          <p>Cordialement,<br>${tenant.profiles.firstname} ${tenant.profiles.lastname}</p>
-        </div>
-      `,
-      attachments: [
-        {
-          filename: `Quittance_${tenant.lastname}_${monthName}_${y}.pdf`,
-          content: pdfBuffer,
-        },
-      ],
-    });
+    await sendEmailViaAPI(
+        tenant.email, 
+        `${tenant.firstname} ${tenant.lastname}`, 
+        pdfBuffer, 
+        monthName, 
+        y,
+        `${tenant.profiles.firstname} ${tenant.profiles.lastname}`
+    );
 
     console.log(`[Email] 🚀 Succès ! Mail envoyé à ${tenant.email}`);
     return res.json({ message: "Email envoyé avec succès !" });
