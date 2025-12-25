@@ -19,6 +19,7 @@ export const generatePdf = async (req: any, res: Response) => {
     doc.pipe(res);
     drawReceiptContent(doc, tenant, month as string, year as string);
     doc.end();
+    console.log("PDF généré avec succès");
   } catch (err) {
     res.status(500).json({ error: "Erreur génération" });
   }
